@@ -1,0 +1,30 @@
+# The name can be obtained using 'sudo evtest'
+input: 'ckb1: CORSAIR K55 RGB PRO Gaming Keyboard vKB'
+
+# This configuration is used to connect a second keyboard to Rainworld
+# it follows the game's default keybinds
+
+# Input event codes:
+# https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
+# Buttons list:
+# https://github.com/yannbouteiller/vgamepad#xbox360-gamepad
+buttons:
+  KEY_LEFTSHIFT: XUSB_GAMEPAD_X
+  KEY_W: XUSB_GAMEPAD_A
+  KEY_X: XUSB_GAMEPAD_B
+  KEY_ESC: XUSB_GAMEPAD_BACK
+  KEY_SPACE: XUSB_GAMEPAD_RIGHT_SHOULDER
+
+axis:
+  KEY_LEFT:
+    axis: x
+    value: -1.0
+  KEY_RIGHT:
+    axis: x
+    value: 1.0
+  KEY_UP:
+    axis: y
+    value: -1.0
+  KEY_DOWN:
+    axis: y
+    value: 1.0
