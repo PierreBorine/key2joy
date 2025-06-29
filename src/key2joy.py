@@ -14,6 +14,17 @@ def throw(message):
     exit(1)
 
 
+def print_help(exit_code):
+    print("Usage: key2joy [path/to/preset] [OPTIONS]")
+    print(
+        "Example: sudo key2joy my_preset.yaml --input 'ckb1: CORSAIR K55 RGB PRO Gaming Keyboard vKB'"
+    )
+    print("\nOptions:")
+    print("  --input [NAME]\t\tspecify the name of an input device")
+    print("  --help\t\tdisplay this help message")
+    exit(exit_code)
+
+
 def load_preset(filename):
     try:
         with open(filename, "r") as f:
@@ -56,29 +67,27 @@ def load_preset(filename):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1 or "--help" in sys.argv:
-        print("Usage: key2joy [path/to/preset] [OPTIONS]")
-        print(
-            "Example: sudo key2joy my_preset.yaml --input 'ckb1: CORSAIR K55 RGB PRO Gaming Keyboard vKB'"
-        )
-        print("\nOptions:")
-        print("  --input [NAME]\t\tspecify the name of an input device")
-        print("  --help\t\tdisplay this help message")
-        exit(0)
+    if len(sys.argv) == 1 or '--help' in sys.argv:
+        print_help(0)
+
+    if sys.argv[1] in ['--input']:
+        print("The first argument must be a path to a preset file\n")
+        print_help(1)
 
     preset = load_preset(sys.argv[1])
 
     # Get input device from cli arg if not in the preset file
-    if preset["input"] is None:
-        if "--input" in sys.argv:
-            # check if '--input' has a value
-            nextIndex = sys.argv.index("--input") + 1
-            if len(sys.argv) > nextIndex:
-                preset["input"] = sys.argv[nextIndex]
-            else:
-                throw("The '--input' flag has no value")
+    if '--input' in sys.argv:
+        # check if '--input' has a value
+        nextIndex = sys.argv.index('--input') + 1
+        if len(sys.argv) > nextIndex:
+            preset['input'] = sys.argv[nextIndex]
         else:
-            throw("An input device was not provided")
+            print("The '--input' flag has no value\n")
+            print_help(1)
+    elif preset['input'] is None:
+        print("An input device was not provided\n")
+        print_help(1)
 
     print(f"Searching device with name: '{preset['input']}'")
     # Iterate over the devices and find the one with the desired name
