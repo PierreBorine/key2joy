@@ -27,35 +27,35 @@ def print_help(exit_code):
 
 def load_preset(filename):
     try:
-        with open(filename, "r") as f:
+        with open(filename, 'r') as f:
             preset = yaml.safe_load(f)
-            presetFinal = {"input": None, "maps": {}}
+            presetFinal = {'input': None, 'maps': {}}
 
-            if "input" in preset:
-                presetFinal["input"] = preset["input"]
+            if 'input' in preset:
+                presetFinal['input'] = preset['input']
 
-            if "buttons" not in preset and "axis" not in preset:
+            if 'buttons' not in preset and 'axis' not in preset:
                 throw("The preset does not contain either 'buttons' or 'axis'")
 
             # merge the preset's buttons and axis as one dict
-            if "buttons" in preset:
-                for key, value in preset["buttons"].items():
+            if 'buttons' in preset:
+                for key, value in preset['buttons'].items():
                     try:
                         try:
                             value = getattr(b, value)
                         except AttributeError:
                             throw(f"Invalid XUSB_BUTTON value: {value}")
-                        presetFinal["maps"][getattr(e, key)] = {"value": value}
+                        presetFinal['maps'][getattr(e, key)] = {"value": value}
                     except AttributeError:
                         throw(f"Invalid input event code: {value}")
-            if "axis" in preset:
-                for key, value in preset["axis"].items():
-                    if "axis" not in value:
+            if 'axis' in preset:
+                for key, value in preset['axis'].items():
+                    if 'axis' not in value:
                         throw(f"Missing 'axis' attribute to {key}")
-                    if "value" not in value:
+                    if 'value' not in value:
                         throw(f"Missing 'value' attribute to {key}")
                     try:
-                        presetFinal["maps"][getattr(e, key)] = value
+                        presetFinal['maps'][getattr(e, key)] = value
                     except AttributeError:
                         throw(f"Invalid input event code: {value}")
 
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
     device = None
     for dev in devices:
-        if dev.name == preset["input"]:
+        if dev.name == preset['input']:
             device = evdev.InputDevice(dev.path)
             break
 
@@ -105,27 +105,27 @@ if __name__ == "__main__":
 
     gamepad = vg.VX360Gamepad()
 
-    axis = {"x": 0.0, "y": 0.0}
+    axis = {'x': 0.0, 'y': 0.0}
 
     print("Starting virtual gamepad")
     try:
         for event in device.read_loop():
             if event.type == e.EV_KEY:
-                button = preset["maps"].get(event.code)
+                button = preset['maps'].get(event.code)
                 if button:
                     if event.value == 1:  # Key press
-                        if "axis" in button:
-                            axis[button["axis"]] += button["value"]
+                        if 'axis' in button:
+                            axis[button['axis']] += button['value']
                         else:
-                            gamepad.press_button(button=button["value"])
+                            gamepad.press_button(button=button['value'])
                     elif event.value == 0:  # Key release
-                        if "axis" in button:
-                            axis[button["axis"]] -= button["value"]
+                        if 'axis' in button:
+                            axis[button['axis']] -= button['value']
                         else:
-                            gamepad.release_button(button=button["value"])
+                            gamepad.release_button(button=button['value'])
                 # TODO: implement right_joystick_float
                 gamepad.left_joystick_float(
-                    x_value_float=axis["x"], y_value_float=axis["y"]
+                    x_value_float=axis['x'], y_value_float=axis['y']
                 )
                 gamepad.update()
     except KeyboardInterrupt:
