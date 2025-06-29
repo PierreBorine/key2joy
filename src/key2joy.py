@@ -9,6 +9,11 @@ from evdev import ecodes as e
 from vgamepad import XUSB_BUTTON as b
 
 
+def throw(message):
+    print(message)
+    exit(1)
+
+
 def load_preset(filename):
     try:
         with open(filename, "r") as f:
@@ -19,8 +24,7 @@ def load_preset(filename):
                 presetFinal["input"] = preset["input"]
 
             if "buttons" not in preset and "axis" not in preset:
-                print("The preset does not contain either 'buttons' or 'axis'")
-                exit(1)
+                throw("The preset does not contain either 'buttons' or 'axis'")
 
             # merge the preset's buttons and axis as one dict
             if "buttons" in preset:
@@ -29,33 +33,26 @@ def load_preset(filename):
                         try:
                             value = getattr(b, value)
                         except AttributeError:
-                            print(f"Invalid XUSB_BUTTON value: {value}")
-                            exit(1)
+                            throw(f"Invalid XUSB_BUTTON value: {value}")
                         presetFinal["maps"][getattr(e, key)] = {"value": value}
                     except AttributeError:
-                        print(f"Invalid input event code: {value}")
-                        exit(1)
+                        throw(f"Invalid input event code: {value}")
             if "axis" in preset:
                 for key, value in preset["axis"].items():
                     if "axis" not in value:
-                        print(f"Missing 'axis' attribute to {key}")
-                        exit(1)
+                        throw(f"Missing 'axis' attribute to {key}")
                     if "value" not in value:
-                        print(f"Missing 'value' attribute to {key}")
-                        exit(1)
+                        throw(f"Missing 'value' attribute to {key}")
                     try:
                         presetFinal["maps"][getattr(e, key)] = value
                     except AttributeError:
-                        print(f"Invalid input event code: {value}")
-                        exit(1)
+                        throw(f"Invalid input event code: {value}")
 
             return presetFinal
     except FileNotFoundError:
-        print(f"File {filename} not found.")
-        exit(1)
+        throw(f"File '{filename}' not found.")
     except yaml.YAMLError:
-        print(f"Invalid YAML in file {filename}.")
-        exit(1)
+        throw(f"Invalid YAML in file '{filename}'.")
 
 
 if __name__ == "__main__":
@@ -79,11 +76,9 @@ if __name__ == "__main__":
             if len(sys.argv) > nextIndex:
                 preset["input"] = sys.argv[nextIndex]
             else:
-                print("The '--input' flag has no value")
-                exit(1)
+                throw("The '--input' flag has no value")
         else:
-            print("An input device was not provided")
-            exit(1)
+            throw("An input device was not provided")
 
     print(f"Searching device with name: '{preset['input']}'")
     # Iterate over the devices and find the one with the desired name
@@ -96,8 +91,7 @@ if __name__ == "__main__":
 
     if device is None:
         print(f"Device not found: '{preset['input']}'")
-        print("Exiting")
-        exit(1)
+        throw("Exiting")
     print(f"Found device '{device.path}'")
 
     gamepad = vg.VX360Gamepad()
