@@ -15,12 +15,12 @@ def throw(message):
 
 
 def print_help(exit_code):
-    print("Usage: key2joy [path/to/preset] [OPTIONS]")
+    print("Usage: key2joy [path/to/preset] [OPTIONS]\n")
     print(
-        "Example: sudo key2joy my_preset.yaml --input 'ckb1: CORSAIR K55 RGB PRO Gaming Keyboard vKB'"
+        "Example: sudo key2joy preset.yaml --input 'ckb1: CORSAIR K55 RGB PRO Gaming Keyboard vKB'"
     )
     print("\nOptions:")
-    print("  --input [NAME]\t\tspecify the name of an input device")
+    print("  --input [NAME]\tspecify the name of an input device")
     print("  --help\t\tdisplay this help message")
     exit(exit_code)
 
@@ -76,11 +76,11 @@ if __name__ == "__main__":
 
     preset = load_preset(sys.argv[1])
 
-    # Get input device from cli arg if not in the preset file
+    # '--input' has priority over the preset file
     if '--input' in sys.argv:
         # check if '--input' has a value
         nextIndex = sys.argv.index('--input') + 1
-        if len(sys.argv) > nextIndex:
+        if len(sys.argv) > nextIndex: # This may be an issue in the future
             preset['input'] = sys.argv[nextIndex]
         else:
             print("The '--input' flag has no value\n")
@@ -91,9 +91,8 @@ if __name__ == "__main__":
 
     print(f"Searching device with name: '{preset['input']}'")
     # Iterate over the devices and find the one with the desired name
-    devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
     device = None
-    for dev in devices:
+    for dev in [evdev.InputDevice(path) for path in evdev.list_devices()]:
         if dev.name == preset['input']:
             device = evdev.InputDevice(dev.path)
             break
@@ -104,7 +103,6 @@ if __name__ == "__main__":
     print(f"Found device '{device.path}'")
 
     gamepad = vg.VX360Gamepad()
-
     axis = {'x': 0.0, 'y': 0.0}
 
     print("Starting virtual gamepad")
