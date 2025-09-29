@@ -15,7 +15,7 @@
     eachSystem = nixpkgs.lib.genAttrs (import systems);
   in {
     packages = eachSystem (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs {inherit system;};
     in {
       vgamepad = pkgs.python3Packages.callPackage ./nix/vgamepad.nix {};
       key2joy = pkgs.python3Packages.callPackage ./nix {
@@ -25,7 +25,7 @@
     });
 
     devShells = eachSystem (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs {inherit system;};
     in {
       default = pkgs.mkShell {
         inherit (self.packages.${system}.key2joy) nativeBuildInputs;
