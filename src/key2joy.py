@@ -106,8 +106,8 @@ if __name__ == "__main__":
             print_help()
     try:
         preset = Preset(sys.argv[1], input)
-    except PresetError as e:
-        print(e)
+    except PresetError as err:
+        print(err)
         sys.exit(1)
 
     if preset.input is None:
