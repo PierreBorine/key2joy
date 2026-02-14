@@ -20,4 +20,4 @@ build-backend = "setuptools.build_meta"
 key2joy = "key2joy:main"
 
 [project.urls]
-Homepage = "https://github.com/PierreBorine/key2joy"
+Homepage = "https://codeberg.org/PierreBorine/key2joy"
