@@ -10,7 +10,6 @@
     self,
     nixpkgs,
     systems,
-    ...
   }: let
     eachSystem = nixpkgs.lib.genAttrs (import systems);
   in {
@@ -26,13 +25,19 @@
 
     devShells = eachSystem (system: let
       pkgs = import nixpkgs {inherit system;};
+      inputsFrom = [self.packages.${system}.key2joy];
+      packages = pkgs.lib.singleton (
+        pkgs.python3.withPackages (pps:
+          (with pps; [uv mypy types-pyyaml])
+          ++ self.packages.${system}.key2joy.propagatedBuildInputs)
+      );
     in {
-      default = pkgs.mkShell {
-        inherit (self.packages.${system}.key2joy) nativeBuildInputs;
-        buildInputs =
-          self.packages.${system}.key2joy.propagatedBuildInputs
-          ++ self.packages.${system}.key2joy.buildInputs;
-      };
+      default = pkgs.mkShellNoCC {inherit inputsFrom packages;};
+      fhs =
+        (pkgs.buildFHSEnv {
+          name = "pyzone";
+          targetPkgs = _: packages;
+        }).env;
     });
   };
 }
