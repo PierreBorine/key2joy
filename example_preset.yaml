@@ -18,13 +18,13 @@ buttons:
 axis:
   KEY_LEFT:
     axis: x
-    value: -1.0
+    offset: -1.0
   KEY_RIGHT:
     axis: x
-    value: 1.0
+    offset: 1.0
   KEY_UP:
     axis: y
-    value: -1.0
+    offset: -1.0
   KEY_DOWN:
     axis: y
-    value: 1.0
+    offset: 1.0

@@ -15,9 +15,9 @@ class PresetError(Exception):
 
 
 class AxisMap:
-    def __init__(self, axis: str, value: float) -> None:
+    def __init__(self, axis: str, offset: float) -> None:
         self.axis: str = axis
-        self.value: float = value
+        self.offset: float = offset
 
 
 class Preset:
@@ -52,13 +52,13 @@ class Preset:
                 self.maps[self.get_ecode(key, value)] = xusb
         if "axis" in preset:
             for key, value in preset["axis"].items():
-                for opt in ["axis", "value"]:
+                for opt in ["axis", "offset"]:
                     if opt not in value:
                         raise PresetError(
                             f"missing '{opt}' attribute to {key}"
                         )
                 self.maps[self.get_ecode(key, value)] = AxisMap(
-                    value["axis"], value["value"]
+                    value["axis"], value["offset"]
                 )
 
     @staticmethod
@@ -131,12 +131,12 @@ def main() -> None:
                 if button is not None:
                     if event.value == 1:  # Key press
                         if isinstance(button, AxisMap):
-                            axis[button.axis] += button.value
+                            axis[button.axis] += button.offset
                         else:
                             gamepad.press_button(button)
                     elif event.value == 0:  # Key release
                         if isinstance(button, AxisMap):
-                            axis[button.axis] -= button.value
+                            axis[button.axis] -= button.offset
                         else:
                             gamepad.release_button(button)
                 # TODO: implement right_joystick_float
