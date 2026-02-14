@@ -1,5 +1,5 @@
 {
-  description = "Python desktop application to emulate a gamepad using a keyboard";
+  description = "Linux cli to emulate a gamepad using a keyboard";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";

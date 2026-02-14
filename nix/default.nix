@@ -25,7 +25,7 @@ buildPythonApplication rec {
   '';
 
   meta = {
-    description = "Python cli application to emulate a gamepad using a keyboard";
+    description = "Linux cli to emulate a gamepad using a keyboard";
     homepage = "https://github.com/PierreBorine/key2joy";
     license = lib.licenses.gpl3;
   };
