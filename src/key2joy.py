@@ -57,7 +57,7 @@ class Preset:
                     xusb: XUSB_BUTTON = getattr(XUSB_BUTTON, value)
                 except AttributeError:
                     raise PresetError(f"invalid XUSB_BUTTON value: {value}")
-                self.maps[self.get_ecode(key, value)] = xusb
+                self.maps[self.get_ecode(key)] = xusb
         if "axis" in preset:
             for key, value in preset["axis"].items():
                 for opt in ["axis", "offset"]:
@@ -65,15 +65,15 @@ class Preset:
                         raise PresetError(
                             f"missing '{opt}' attribute to {key}"
                         )
-                self.maps[self.get_ecode(key, value)] = AxisMap(
+                self.maps[self.get_ecode(key)] = AxisMap(
                     value["axis"], value["offset"]
                 )
 
     @staticmethod
-    def get_ecode(key: str, value: str) -> int:
+    def get_ecode(key: str) -> int:
         ecode = ecodes.ecodes.get(key)
         if ecode is None:
-            raise PresetError(f"invalid input event code: {value}")
+            raise PresetError(f"invalid input event code: {key}")
         return ecode
 
 
