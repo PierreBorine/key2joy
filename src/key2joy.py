@@ -45,31 +45,29 @@ class Preset:
                 "The preset does not contain either 'buttons' or 'axis'"
             )
 
-        # merge the preset's buttons and axis as one dict
         if "buttons" in preset:
             for key, value in preset["buttons"].items():
                 try:
-                    try:
-                        value = getattr(b, value)
-                    except AttributeError:
-                        raise PresetError(
-                            f"Invalid XUSB_BUTTON value: {value}"
-                        )
-                    self.maps[getattr(e, key)] = value
+                    xusb = getattr(b, value)
                 except AttributeError:
-                    raise PresetError(f"Invalid input event code: {value}")
+                    raise PresetError(f"Invalid XUSB_BUTTON value: {value}")
+                self.maps[self.get_ecode(key)] = xusb
         if "axis" in preset:
             for key, value in preset["axis"].items():
                 if "axis" not in value:
                     raise PresetError(f"Missing 'axis' attribute to {key}")
                 if "value" not in value:
                     raise PresetError(f"Missing 'value' attribute to {key}")
-                try:
-                    self.maps[getattr(e, key)] = AxisMap(
-                        value["axis"], value["value"]
-                    )
-                except AttributeError:
-                    raise PresetError(f"Invalid input event code: {value}")
+                self.maps[self.get_ecode(key)] = AxisMap(
+                    value["axis"], value["value"]
+                )
+
+    @staticmethod
+    def get_ecode(key: str) -> int:
+        ecode = e.ecodes.get(key)
+        if ecode is None:
+            raise PresetError(f"Invalid input event code: {value}")
+        return ecode
 
 
 def print_help():
@@ -132,7 +130,7 @@ def main() -> None:
         for event in device.read_loop():
             if event.type == e.EV_KEY:
                 button = preset.maps.get(event.code)
-                if button:
+                if button is not None:
                     if event.value == 1:  # Key press
                         if isinstance(button, AxisMap):
                             axis[button.axis] += button.value
