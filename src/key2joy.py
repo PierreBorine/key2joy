@@ -72,7 +72,8 @@ class Preset:
 def print_help():
     print("Usage: key2joy [path/to/preset] [OPTIONS]\n")
     print(
-        "Example: sudo key2joy preset.yaml --input 'Keychron Keychron K8 HE Keyboard'"
+        "Example: sudo key2joy preset.yaml",
+        "--input 'Keychron Keychron K8 HE Keyboard'",
     )
     print("\nOptions:")
     print("  --input [NAME]\tspecify the name of an input device")
