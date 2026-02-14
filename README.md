@@ -9,6 +9,10 @@
 A Linux cli tool to emulate a gamepad using a keyboard.
 </p>
 
+> [!NOTE]
+> This project has [given up on github](https://giveupgithub.org) and is now
+> hosted on [Codeberg](https://codeberg.org/PierreBorine/key2joy).
+
 ## Usage
 
 ```sh
