@@ -11,7 +11,7 @@ buildPythonApplication rec {
   version = "0.1.0";
   pyproject = false;
 
-  src = ../src;
+  src = lib.cleanSource ../src;
 
   propagatedBuildInputs = [
     libevdev
