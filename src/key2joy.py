@@ -11,7 +11,7 @@ from vgamepad import XUSB_BUTTON as b
 
 def throw(message):
     print(message)
-    exit(1)
+    sys.exit(1)
 
 
 class AxisMap:
@@ -67,7 +67,7 @@ class Preset:
             throw(f"Invalid YAML in file '{filename}'.")
 
 
-def print_help(exit_code):
+def print_help():
     print("Usage: key2joy [path/to/preset] [OPTIONS]\n")
     print(
         "Example: sudo key2joy preset.yaml --input 'ckb1: CORSAIR K55 RGB PRO Gaming Keyboard vKB'"
@@ -75,16 +75,16 @@ def print_help(exit_code):
     print("\nOptions:")
     print("  --input [NAME]\tspecify the name of an input device")
     print("  --help\t\tdisplay this help message")
-    exit(exit_code)
+    sys.exit(0)
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 1 or "--help" in sys.argv:
-        print_help(0)
+        print_help()
 
     if sys.argv[1] in ["--input"]:
         print("The first argument must be a path to a preset file\n")
-        print_help(1)
+        print_help()
 
     input = None
     if "--input" in sys.argv:
@@ -94,12 +94,12 @@ if __name__ == "__main__":
             input = sys.argv[nextIndex]
         else:
             print("The '--input' flag has no value\n")
-            print_help(1)
+            print_help()
     preset = Preset(sys.argv[1], input)
 
     if preset.input is None:
         print("An input device was not provided\n")
-        print_help(1)
+        print_help()
 
     print(f"Searching device with name: '{preset.input}'")
     # Iterate over the devices and find the one with the desired name
@@ -140,4 +140,4 @@ if __name__ == "__main__":
                 gamepad.update()
     except KeyboardInterrupt:
         print("Stopping virtual gamepad")
-        exit(0)
+        sys.exit(0)
