@@ -6,8 +6,8 @@ from typing import Any
 import evdev
 import vgamepad as vg
 import yaml
-from evdev import ecodes as e
-from vgamepad import XUSB_BUTTON as b
+from evdev import InputDevice, ecodes
+from vgamepad import XUSB_BUTTON
 
 
 class PresetError(Exception):
@@ -23,7 +23,7 @@ class AxisMap:
 class Preset:
     def __init__(self, filename: str, input: str | None = None) -> None:
         self.input: str | None = input
-        self.maps: dict[str, str | AxisMap] = {}
+        self.maps: dict[int, XUSB_BUTTON | AxisMap] = {}
 
         preset: dict[str, Any] | None = None
         try:
@@ -48,23 +48,23 @@ class Preset:
         if "buttons" in preset:
             for key, value in preset["buttons"].items():
                 try:
-                    xusb = getattr(b, value)
+                    xusb: XUSB_BUTTON = getattr(XUSB_BUTTON, value)
                 except AttributeError:
                     raise PresetError(f"Invalid XUSB_BUTTON value: {value}")
-                self.maps[self.get_ecode(key)] = xusb
+                self.maps[self.get_ecode(key, value)] = xusb
         if "axis" in preset:
             for key, value in preset["axis"].items():
                 if "axis" not in value:
                     raise PresetError(f"Missing 'axis' attribute to {key}")
                 if "value" not in value:
                     raise PresetError(f"Missing 'value' attribute to {key}")
-                self.maps[self.get_ecode(key)] = AxisMap(
+                self.maps[self.get_ecode(key, value)] = AxisMap(
                     value["axis"], value["value"]
                 )
 
     @staticmethod
-    def get_ecode(key: str) -> int:
-        ecode = e.ecodes.get(key)
+    def get_ecode(key: str, value: str) -> int:
+        ecode = ecodes.ecodes.get(key)
         if ecode is None:
             raise PresetError(f"Invalid input event code: {value}")
         return ecode
@@ -112,11 +112,10 @@ def main() -> None:
     # Iterate over the devices and find the one with the desired name
     device = None
     for path in evdev.list_devices():
-        dev = evdev.InputDevice(path)
+        dev = InputDevice(path)
         if dev.name == preset.input:
-            device = evdev.InputDevice(dev.path)
+            device = InputDevice(dev.path)
             break
-
     if device is None:
         print(f"Device not found: '{preset.input}', exiting...")
         sys.exit(1)
@@ -128,7 +127,7 @@ def main() -> None:
     print("Starting virtual gamepad")
     try:
         for event in device.read_loop():
-            if event.type == e.EV_KEY:
+            if event.type == ecodes.EV_KEY:
                 button = preset.maps.get(event.code)
                 if button is not None:
                     if event.value == 1:  # Key press
