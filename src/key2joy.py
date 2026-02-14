@@ -83,7 +83,7 @@ def print_help():
     sys.exit(0)
 
 
-if __name__ == "__main__":
+def main() -> None:
     if len(sys.argv) == 1 or "--help" in sys.argv:
         print_help()
 
@@ -151,3 +151,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Stopping virtual gamepad")
         sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
