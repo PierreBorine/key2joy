@@ -60,9 +60,9 @@ axis:
 ## Dependencies
 
 - [vgamepad](https://github.com/yannbouteiller/vgamepad)
-- Gamepad emulation library for Python
+Gamepad emulation library for Python
 - [PyYAML](https://github.com/yaml/pyyaml) - YAML parser for Python
 - [python-evdev](https://python-evdev.readthedocs.io/en/latest)
-- Python bindings for Linux inputs
+Python bindings for Linux inputs
 - [libevdev](https://www.freedesktop.org/software/libevdev/doc/latest/index.html)
-- Linux inputs library
+Linux inputs library
