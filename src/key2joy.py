@@ -41,9 +41,7 @@ class Preset:
             self.input = preset["input"]
 
         if "buttons" not in preset and "axis" not in preset:
-            raise PresetError(
-                "The preset does not contain either 'buttons' or 'axis'"
-            )
+            raise PresetError("the preset does not contain any configuration")
 
         if "buttons" in preset:
             for key, value in preset["buttons"].items():
@@ -96,7 +94,7 @@ def main() -> None:
         if len(sys.argv) > nextIndex:  # This may be an issue in the future
             input = sys.argv[nextIndex]
         else:
-            print("The '--input' flag has no value\n")
+            print("input flag provided with no value\n")
             print_help()
     try:
         preset = Preset(sys.argv[1], input)
@@ -105,10 +103,10 @@ def main() -> None:
         sys.exit(1)
 
     if preset.input is None:
-        print("An input device was not provided\n")
+        print("No input device were provided\n")
         print_help()
 
-    print(f"Searching device with name: '{preset.input}'")
+    print(f"Searching device: '{preset.input}'")
     # Iterate over the devices and find the one with the desired name
     device = None
     for path in evdev.list_devices():
