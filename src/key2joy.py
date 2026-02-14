@@ -29,8 +29,8 @@ class Preset:
         try:
             with open(filename, "r") as f:
                 preset = yaml.safe_load(f)
-        except FileNotFoundError:
-            raise PresetError(f"File '{filename}' not found.")
+        except OSError as err:
+            raise PresetError(str(err))
         except yaml.YAMLError:
             raise PresetError(f"Invalid YAML in file '{filename}'.")
         if preset is None:
