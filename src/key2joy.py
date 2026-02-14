@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+from typing import Any
 
 import evdev
 import vgamepad as vg
@@ -24,56 +25,51 @@ class Preset:
         self.input: str | None = input
         self.maps: dict[str, str | AxisMap] = {}
 
+        preset: dict[str, Any] | None = None
         try:
             with open(filename, "r") as f:
                 preset = yaml.safe_load(f)
-
-                # '--input' has priority over the preset file
-                if self.input is None and "input" in preset:
-                    self.input = preset["input"]
-
-                if "buttons" not in preset and "axis" not in preset:
-                    raise PresetError(
-                        "The preset does not contain either 'buttons' or 'axis'"
-                    )
-
-                # merge the preset's buttons and axis as one dict
-                if "buttons" in preset:
-                    for key, value in preset["buttons"].items():
-                        try:
-                            try:
-                                value = getattr(b, value)
-                            except AttributeError:
-                                raise PresetError(
-                                    f"Invalid XUSB_BUTTON value: {value}"
-                                )
-                            self.maps[getattr(e, key)] = value
-                        except AttributeError:
-                            raise PresetError(
-                                f"Invalid input event code: {value}"
-                            )
-                if "axis" in preset:
-                    for key, value in preset["axis"].items():
-                        if "axis" not in value:
-                            raise PresetError(
-                                f"Missing 'axis' attribute to {key}"
-                            )
-                        if "value" not in value:
-                            raise PresetError(
-                                f"Missing 'value' attribute to {key}"
-                            )
-                        try:
-                            self.maps[getattr(e, key)] = AxisMap(
-                                value["axis"], value["value"]
-                            )
-                        except AttributeError:
-                            raise PresetError(
-                                f"Invalid input event code: {value}"
-                            )
         except FileNotFoundError:
             raise PresetError(f"File '{filename}' not found.")
         except yaml.YAMLError:
             raise PresetError(f"Invalid YAML in file '{filename}'.")
+        if preset is None:
+            raise PresetError("Could not read preset file")
+
+        # '--input' has priority over the preset file
+        if self.input is None and "input" in preset:
+            self.input = preset["input"]
+
+        if "buttons" not in preset and "axis" not in preset:
+            raise PresetError(
+                "The preset does not contain either 'buttons' or 'axis'"
+            )
+
+        # merge the preset's buttons and axis as one dict
+        if "buttons" in preset:
+            for key, value in preset["buttons"].items():
+                try:
+                    try:
+                        value = getattr(b, value)
+                    except AttributeError:
+                        raise PresetError(
+                            f"Invalid XUSB_BUTTON value: {value}"
+                        )
+                    self.maps[getattr(e, key)] = value
+                except AttributeError:
+                    raise PresetError(f"Invalid input event code: {value}")
+        if "axis" in preset:
+            for key, value in preset["axis"].items():
+                if "axis" not in value:
+                    raise PresetError(f"Missing 'axis' attribute to {key}")
+                if "value" not in value:
+                    raise PresetError(f"Missing 'value' attribute to {key}")
+                try:
+                    self.maps[getattr(e, key)] = AxisMap(
+                        value["axis"], value["value"]
+                    )
+                except AttributeError:
+                    raise PresetError(f"Invalid input event code: {value}")
 
 
 def print_help():
