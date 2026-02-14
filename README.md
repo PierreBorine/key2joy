@@ -14,7 +14,7 @@ A Linux cli tool to emulate a gamepad using a keyboard.
 sudo key2joy preset.yaml
 ```
 ```sh
-sudo key2joy preset.yaml --input "ckb1: CORSAIR K55 RGB PRO Gaming Keyboard vKB"
+sudo key2joy preset.yaml --input "Keychron Keychron K8 HE Keyboard"
 ```
 - <kbd>CTRL</kbd> + <kbd>C</kbd> to stop
 
@@ -24,7 +24,7 @@ it follows the game's default keybinds.
 ```yaml
 # Optional: The name of the device to take inputs from.
 # It can be obtained using 'sudo evtest'
-input: 'ckb1: CORSAIR K55 RGB PRO Gaming Keyboard vKB'
+input: 'Keychron Keychron K8 HE Keyboard'
 
 # Input event codes:
 # https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
