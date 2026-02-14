@@ -29,7 +29,7 @@
       packages = pkgs.lib.singleton (
         pkgs.python3.withPackages (pps:
           (with pps; [uv mypy types-pyyaml])
-          ++ self.packages.${system}.key2joy.propagatedBuildInputs)
+          ++ self.packages.${system}.key2joy.dependencies)
       );
     in {
       default = pkgs.mkShellNoCC {inherit inputsFrom packages;};

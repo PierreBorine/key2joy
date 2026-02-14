@@ -1,0 +1,23 @@
+[project]
+name = "key2joy"
+version = "0.1.0"
+description = "Linux cli to emulate a gamepad using a keyboard"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+requires-python = ">=3.13"
+dependencies = [
+    "evdev>=1.9.2",
+    "libevdev>=0.11",
+    "pyyaml>=6.0.2",
+    "vgamepad==0.1.0", # manual bump
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+key2joy = "key2joy:main"
+
+[project.urls]
+Homepage = "https://github.com/PierreBorine/key2joy"

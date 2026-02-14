@@ -1,32 +1,34 @@
 {
   lib,
   buildPythonApplication,
+  setuptools,
   vgamepad,
   libevdev,
   evdev,
   pyyaml,
-}:
-buildPythonApplication rec {
-  pname = "key2joy";
-  version = "0.1.0";
-  pyproject = false;
+}: let
+  pyproject = (lib.importTOML ../pyproject.toml).project;
+in
+  buildPythonApplication {
+    pname = pyproject.name;
+    inherit (pyproject) version;
+    pyproject = true;
 
-  src = lib.cleanSource ../src;
+    src = lib.cleanSource ../.;
 
-  propagatedBuildInputs = [
-    libevdev
-    evdev
-    vgamepad
-    pyyaml
-  ];
+    nativeBuildInputs = [setuptools];
 
-  installPhase = ''
-    install -Dm755 key2joy.py $out/bin/${pname}
-  '';
+    dependencies = [
+      libevdev
+      evdev
+      vgamepad
+      pyyaml
+    ];
 
-  meta = {
-    description = "Linux cli to emulate a gamepad using a keyboard";
-    homepage = "https://github.com/PierreBorine/key2joy";
-    license = lib.licenses.gpl3;
-  };
-}
+    meta = {
+      inherit (pyproject) description;
+      homepage = pyproject.urls.Homepage;
+      license = lib.licenses.gpl3;
+      mainProgram = "key2joy";
+    };
+  }
