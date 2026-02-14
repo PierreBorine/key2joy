@@ -117,7 +117,8 @@ if __name__ == "__main__":
     print(f"Searching device with name: '{preset.input}'")
     # Iterate over the devices and find the one with the desired name
     device = None
-    for dev in [evdev.InputDevice(path) for path in evdev.list_devices()]:
+    for path in evdev.list_devices():
+        dev = evdev.InputDevice(path)
         if dev.name == preset.input:
             device = evdev.InputDevice(dev.path)
             break
