@@ -32,9 +32,9 @@ class Preset:
         except OSError as err:
             raise PresetError(str(err))
         except yaml.YAMLError:
-            raise PresetError(f"Invalid YAML in file '{filename}'.")
+            raise PresetError(f"invalid YAML in file '{filename}'.")
         if preset is None:
-            raise PresetError("Could not read preset file")
+            raise PresetError("could not read preset file")
 
         # '--input' has priority over the preset file
         if self.input is None and "input" in preset:
@@ -48,14 +48,14 @@ class Preset:
                 try:
                     xusb: XUSB_BUTTON = getattr(XUSB_BUTTON, value)
                 except AttributeError:
-                    raise PresetError(f"Invalid XUSB_BUTTON value: {value}")
+                    raise PresetError(f"invalid XUSB_BUTTON value: {value}")
                 self.maps[self.get_ecode(key, value)] = xusb
         if "axis" in preset:
             for key, value in preset["axis"].items():
                 if "axis" not in value:
-                    raise PresetError(f"Missing 'axis' attribute to {key}")
+                    raise PresetError(f"missing 'axis' attribute to {key}")
                 if "value" not in value:
-                    raise PresetError(f"Missing 'value' attribute to {key}")
+                    raise PresetError(f"missing 'value' attribute to {key}")
                 self.maps[self.get_ecode(key, value)] = AxisMap(
                     value["axis"], value["value"]
                 )
@@ -64,7 +64,7 @@ class Preset:
     def get_ecode(key: str, value: str) -> int:
         ecode = ecodes.ecodes.get(key)
         if ecode is None:
-            raise PresetError(f"Invalid input event code: {value}")
+            raise PresetError(f"invalid input event code: {value}")
         return ecode
 
 
@@ -99,7 +99,7 @@ def main() -> None:
     try:
         preset = Preset(sys.argv[1], input)
     except PresetError as err:
-        print(err)
+        print(str(err).capitalize())
         sys.exit(1)
 
     if preset.input is None:
