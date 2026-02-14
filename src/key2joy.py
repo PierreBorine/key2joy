@@ -52,10 +52,11 @@ class Preset:
                 self.maps[self.get_ecode(key, value)] = xusb
         if "axis" in preset:
             for key, value in preset["axis"].items():
-                if "axis" not in value:
-                    raise PresetError(f"missing 'axis' attribute to {key}")
-                if "value" not in value:
-                    raise PresetError(f"missing 'value' attribute to {key}")
+                for opt in ["axis", "value"]:
+                    if opt not in value:
+                        raise PresetError(
+                            f"missing '{opt}' attribute to {key}"
+                        )
                 self.maps[self.get_ecode(key, value)] = AxisMap(
                     value["axis"], value["value"]
                 )
