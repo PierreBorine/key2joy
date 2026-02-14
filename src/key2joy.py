@@ -21,8 +21,16 @@ class AxisMap:
 
 
 class Preset:
+    """A preset of keyboard to gamepad maps.
+
+    Attributes:
+        input: The input device name to listen to.
+        maps: Maps of event codes to gamepad actions.
+    """
+
     def __init__(self, filename: str, input: str | None = None) -> None:
         self.input: str | None = input
+        # dict of ecode: action
         self.maps: dict[int, XUSB_BUTTON | AxisMap] = {}
 
         preset: dict[str, Any] | None = None
